@@ -7,6 +7,25 @@ mixer for every app on the machine.
 All three windows follow you across **every virtual desktop**, stay on top,
 and never steal keyboard focus.
 
+## Download
+
+Grab the latest build from the
+**[releases page](https://github.com/C-Squared-Solutions-LLC/PlayMe/releases/latest)**:
+
+| | |
+|---|---|
+| `PlayMe-v*-win-x64.exe` | the widget - download and run it, nothing to install |
+| `PlayMe.Mcp-v*-win-x64.exe` | optional, lets Claude control your media |
+
+Both are self-contained, so there is no .NET runtime to install. 64-bit
+Windows 10 2004+ or Windows 11; the player panel needs the WebView2 runtime,
+which ships with Windows 11. The builds are unsigned, so SmartScreen will ask
+the first time - *More info* then *Run anyway*.
+
+Settings live in `%AppData%\PlayMe\settings.json` and the player keeps its
+own browser profile in `%AppData%\PlayMerowser`, so signing into a site in
+the panel doesn't touch your real browser.
+
 ## The widget
 
 A small card showing album art, title, artist, prev / play-pause / next, and a

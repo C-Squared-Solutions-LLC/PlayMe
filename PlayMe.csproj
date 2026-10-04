@@ -1,0 +1,48 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows10.0.22621.0</TargetFramework>
+    <SupportedOSPlatformVersion>10.0.19041.0</SupportedOSPlatformVersion>
+    <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <RootNamespace>PlayMe</RootNamespace>
+    <AssemblyName>PlayMe</AssemblyName>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon Condition="Exists('Assets\icon.ico')">Assets\icon.ico</ApplicationIcon>
+    <Version>1.9.3</Version>
+    <Description>Compact always-on-top controller for Amazon Music (web) via the Windows system media session.</Description>
+
+    <!-- A corner widget should stay small: workstation GC, no background heap,
+         and hand memory back to the OS instead of holding the high-water mark. -->
+    <ServerGarbageCollection>false</ServerGarbageCollection>
+    <ConcurrentGarbageCollection>false</ConcurrentGarbageCollection>
+    <RetainVMGarbageCollection>false</RetainVMGarbageCollection>
+    <TieredPGO>true</TieredPGO>
+
+    <!-- WebView2 ships a native loader; single-file needs it unpacked. -->
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.4258.31" />
+    <PackageReference Include="NAudio.Wasapi" Version="2.2.1" />
+    <PackageReference Include="Vortice.Direct3D11" Version="3.6.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Compact the large object heap as it goes; album art and captured
+         frames are the only big allocations and both are recycled. -->
+    <RuntimeHostConfigurationOption Include="System.GC.ConserveMemory" Value="5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- the MCP companion is its own project -->
+    <Compile Remove="mcp\**" />
+    <None Remove="mcp\**" />
+    <Page Remove="mcp\**" />
+  </ItemGroup>
+
+</Project>

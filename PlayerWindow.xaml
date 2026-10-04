@@ -1,0 +1,207 @@
+<Window x:Class="PlayMe.PlayerWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="PlayMe player" Width="420" Height="290"
+        MinWidth="240" MinHeight="140"
+        WindowStyle="None" AllowsTransparency="False" Background="#0B0C10"
+        Topmost="True" ShowInTaskbar="False" ResizeMode="CanResize"
+        ShowActivated="False" UseLayoutRounding="True" SnapsToDevicePixels="True">
+    <Window.Resources>
+        <SolidColorBrush x:Key="TextPrimary" Color="#F2F3F7"/>
+        <SolidColorBrush x:Key="TextSecondary" Color="#9DA2B4"/>
+        <SolidColorBrush x:Key="Accent" Color="#3BC8D6"/>
+
+        <Style x:Key="BarButton" TargetType="Button">
+            <Setter Property="Width" Value="22"/>
+            <Setter Property="Height" Value="22"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="bg" Background="{TemplateBinding Background}" CornerRadius="4">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="bg" Property="Background" Value="#33FFFFFF"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="VolFill" TargetType="RepeatButton">
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="IsTabStop" Value="False"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RepeatButton">
+                        <Grid Height="12" Background="Transparent">
+                            <Border Height="3" CornerRadius="1.5" VerticalAlignment="Center"
+                                    Background="{StaticResource Accent}"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="VolRest" TargetType="RepeatButton">
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="IsTabStop" Value="False"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RepeatButton">
+                        <Grid Height="12" Background="Transparent"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="VolThumb" TargetType="Thumb">
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Thumb">
+                        <Ellipse Width="9" Height="9" Fill="#F2F3F7"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="VolSlider" TargetType="Slider">
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="IsMoveToPointEnabled" Value="True"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Slider">
+                        <Grid>
+                            <Border Height="3" CornerRadius="1.5" Background="#2EFFFFFF"
+                                    VerticalAlignment="Center"/>
+                            <Track x:Name="PART_Track" VerticalAlignment="Center">
+                                <Track.DecreaseRepeatButton>
+                                    <RepeatButton Style="{StaticResource VolFill}"
+                                                  Command="{x:Static Slider.DecreaseLarge}"/>
+                                </Track.DecreaseRepeatButton>
+                                <Track.IncreaseRepeatButton>
+                                    <RepeatButton Style="{StaticResource VolRest}"
+                                                  Command="{x:Static Slider.IncreaseLarge}"/>
+                                </Track.IncreaseRepeatButton>
+                                <Track.Thumb>
+                                    <Thumb Style="{StaticResource VolThumb}"/>
+                                </Track.Thumb>
+                            </Track>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="BarGlyph" TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="Segoe Fluent Icons, Segoe MDL2 Assets"/>
+            <Setter Property="Foreground" Value="{StaticResource TextPrimary}"/>
+            <Setter Property="FontSize" Value="10"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+
+    </Window.Resources>
+
+    <Border BorderBrush="#33FFFFFF" BorderThickness="1">
+        <Grid Background="#0B0C10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="28"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="8"/>
+            </Grid.RowDefinitions>
+
+            <!-- The bar is also the drag handle: web content swallows the mouse,
+                 so there is nowhere else to grab the window. -->
+            <Grid x:Name="Bar" Grid.Row="0" Background="#1A1C24"
+                  MouseLeftButtonDown="Bar_MouseLeftButtonDown" MouseWheel="Bar_MouseWheel">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Grid.ContextMenu>
+                    <ContextMenu x:Name="Menu"/>
+                </Grid.ContextMenu>
+
+                <!-- favourites and anything else that is open, by site icon -->
+                <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Disabled"
+                              HorizontalScrollBarVisibility="Hidden" Margin="3,0,4,0" MaxWidth="150">
+                    <StackPanel x:Name="QuickStrip" Orientation="Horizontal" VerticalAlignment="Center"/>
+                </ScrollViewer>
+
+                <TextBlock x:Name="TitleText" Grid.Column="1" Text="PlayMe" Margin="4,0,6,0"
+                           VerticalAlignment="Center" FontSize="11"
+                           Foreground="{StaticResource TextSecondary}"
+                           TextTrimming="CharacterEllipsis"/>
+
+                <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right"
+                            Margin="0,1,2,1">
+                    <Button x:Name="MuteButton" Style="{StaticResource BarButton}"
+                            Click="Mute_Click" ToolTip="Mute what the player is playing">
+                        <TextBlock x:Name="MuteGlyph" Style="{StaticResource BarGlyph}" Text="&#xE767;"/>
+                    </Button>
+                    <Slider x:Name="VolumeSlider" Style="{StaticResource VolSlider}" Width="62"
+                            Minimum="0" Maximum="100" Value="100" Margin="2,0,6,0"
+                            ToolTip="Volume of the site you are looking at"
+                            ValueChanged="Volume_ValueChanged"/>
+
+                    <Button x:Name="GoButton" Style="{StaticResource BarButton}"
+                            Click="Go_Click" ToolTip="Open a site">
+                        <TextBlock Style="{StaticResource BarGlyph}" Text="&#xE710;"/>
+                    </Button>
+                    <Button x:Name="InteractButton" Style="{StaticResource BarButton}"
+                            Click="Interact_Click"
+                            ToolTip="Let the panel take keyboard focus - click this before typing or signing in">
+                        <TextBlock x:Name="InteractGlyph" Style="{StaticResource BarGlyph}" Text="&#xE765;"/>
+                    </Button>
+                    <Button x:Name="VideoOnlyButton" Style="{StaticResource BarButton}"
+                            Click="VideoOnly_Click"
+                            ToolTip="Video only - show just the picture, without the chat and menus">
+                        <TextBlock x:Name="VideoOnlyGlyph" Style="{StaticResource BarGlyph}" Text="&#xE7A8;"/>
+                    </Button>
+                    <Button x:Name="OptionsButton" Style="{StaticResource BarButton}"
+                            Click="Options_Click" ToolTip="Options">
+                        <TextBlock Style="{StaticResource BarGlyph}" Text="&#xE712;"/>
+                    </Button>
+                    <Button x:Name="CloseButton" Style="{StaticResource BarButton}"
+                            Click="Close_Click" ToolTip="Hide the player (what is playing keeps playing)">
+                        <TextBlock Style="{StaticResource BarGlyph}" Text="&#xE8BB;" FontSize="9"/>
+                    </Button>
+                </StackPanel>
+            </Grid>
+
+            <!-- Open sites live here, one WebView2 each; only the active one is
+                 shown, the rest keep playing in the background. -->
+            <Grid x:Name="TabHost" Grid.Row="1"/>
+
+            <!-- WebView2 is a child window, so nothing WPF draws can sit on top
+                 of it; the status panel replaces it rather than overlaying it. -->
+            <Border x:Name="StatusPanel" Grid.Row="1" Background="#0B0C10">
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20">
+                    <TextBlock x:Name="StatusText" Text="Starting..."
+                               Foreground="{StaticResource TextPrimary}" FontSize="12"
+                               TextWrapping="Wrap" TextAlignment="Center"/>
+                    <TextBlock x:Name="StatusHint" Text="" Margin="0,6,0,0"
+                               Foreground="{StaticResource TextSecondary}" FontSize="11"
+                               TextWrapping="Wrap" TextAlignment="Center"/>
+                </StackPanel>
+            </Border>
+
+            <Border x:Name="Grip" Grid.Row="2" Background="#14FFFFFF" Cursor="SizeNWSE"
+                    MouseLeftButtonDown="Grip_MouseLeftButtonDown"
+                    ToolTip="Drag to resize (the window edges work too)">
+                <Path Stroke="#90FFFFFF" StrokeThickness="1.2"
+                      HorizontalAlignment="Right" VerticalAlignment="Center"
+                      Margin="0,0,5,0" Data="M 0,6 L 6,0 M 4,6 L 10,0"/>
+            </Border>
+        </Grid>
+    </Border>
+</Window>

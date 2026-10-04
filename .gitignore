@@ -1,0 +1,12 @@
+# build output
+bin/
+obj/
+
+# IDE
+.vs/
+*.user
+*.suo
+*.userprefs
+
+# generated icon (rebuilt by build/gen-icon.ps1)
+Assets/icon.ico

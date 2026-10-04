@@ -23,7 +23,7 @@ which ships with Windows 11. The builds are unsigned, so SmartScreen will ask
 the first time - *More info* then *Run anyway*.
 
 Settings live in `%AppData%\PlayMe\settings.json` and the player keeps its
-own browser profile in `%AppData%\PlayMerowser`, so signing into a site in
+own browser profile in `%AppData%\PlayMe\browser`, so signing into a site in
 the panel doesn't touch your real browser.
 
 ## The widget
